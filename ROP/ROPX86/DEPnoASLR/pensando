@@ -1,0 +1,46 @@
+el system entra pero falla cuando llama a f7f116fd
+
+0xffffd56c│+0x0000: 0xf7e195a0  →  <system+0> call 0xf7f116fd	 ← $esp
+
+*****************
+0xffffd56c│+0x0000: 0xf7e195a0  →  <system+0> call 0xf7f116fd	 ← $esp
+
+0xffffd570│+0x0004: 0xdeadbeef
+
+0xffffd574│+0x0008: 0xf7f58b35  →  "/bin/sh"
+ todo bien en la cola
+
+#$>>> alparecer salta aqui
+
+ →  0x80491a6 <vulnerable_function+52> ret    
+   ↳  0xf7e195a0 <system+0>       call   0xf7f116fd
+
+#$>>> ee fd dice que mueve a edx lo de esp
+
+$esp   : 0xffffd570  →  0xdeadbeef
+
+$eip  : 0xf7e195a0  →  <system+0> call 0xf7f116fd
+
+ → 0xf7e195a0 <system+0>       call   0xf7f116fd
+   ↳  0xf7f116fd                  mov    edx, DWORD PTR [esp]
+
+
+#$>>> okey apesar de eso esta saltando a la ret fictisia y bin/sh esta como siguiente...entonces!! siguiente
+
+→ 0xf7e195a0 <system+0>       call   0xf7f116fd
+
+CAMBIAIRA SI CAMBIO LA DIRECCION?
+
+orita lo intenamos mira esto
+
+la shell solo queda en pila pero el que falla es el return falso
+
+NOO ENTRA A BIN SH PERO REGRESA Y YA FALLA
+
+
+
+nueva estrategia... 
+
+EXP= 
+
+SOLO DESACTIVA ASLR, SE VUELVE A ACTIVAR '.'

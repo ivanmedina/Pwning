@@ -1,0 +1,59 @@
+babyRev
+
+Primero ejecute el script y al parecer requiere un argumento, descompile el archivo con Ghidra para analizar mejor el codigo: 
+
+ if (param_1 == 2) {
+    local_10 = 0; //un contador
+    local_c = 0; //es la que se compara
+
+    // tanto puntero lo que hace es apuntar a un caracter de nuestro argumento que es una cadena
+    // el while recorre esa cadena
+    while (*(char *)((long)local_10 + *(long *)(param_2 + 8)) != '\0') {
+
+      //a la variable local_c se le va acumulando el valor como entero de cada caracter	
+      local_c = local_c + (int)*(char *)((long)local_10 + *(long *)(param_2 + 8));
+      //mientras local_c solo se incrementa de uno en uno
+      local_10 = local_10 + 1;
+    }
+
+    //finalmente aqui es donde ocurre la magia, compara que el contador sea 16
+    //y que la suma de los caracteres en localc sea 0x554 es decir 1364 en base 10
+    if ((local_10 == 0x10) && (local_c == 0x554)) { //lo hace 16 veces deben ser 16 caracteres
+      bVar1 = true;
+    }
+
+    //OKEY, ENTONCES NUESTRO ARGUMENTO ES UNA CADENA QUE SE COMPARA CARACTER POR CARACTER Y ACUMULA
+    //CUANTOS SON Y SU REPRESENTACION EN ENTERO, PARA REVISAR QUE SEAN 16 CARACTERES
+    // Y LA SUMA DE TODOS SUS CARACTERES SEAN 1364, ASI bVar1 sera true y ...
+
+
+    else {
+      bVar1 = false;
+    }
+
+    //YEAH LA BANDERA ...
+    if (bVar1) {
+      printf("Yeah! %s es la bandera!\n",*(undefined8 *)(param_2 + 8));
+      uVar2 = 0;
+    }
+
+Bueno ahora necesito saber cual es esa cadena...
+
+    1364 / 16 =85.25 
+No puedo usar una cadena donde todos los caracteres sean los mismos
+Pero el 85 * 15 es un entero muy cercano a 1364
+    85*15=1275
+...
+    1364-1275=89
+...
+el 85 en ASCII es la "U" mayuscula
+y el 89 es la "Y"
+asi que en teoria deben de ser 15 letras U y una Y: "UUUUUUUUUUUUUUUY"
+   
+    $ ./babyRev UUUUUUUUUUUUUUUY
+    Yeah! UUUUUUUUUUUUUUUY es la bandera!
+
+Si, si es la cadena.
+
+
+

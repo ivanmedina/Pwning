@@ -1,0 +1,11 @@
+$ gcc -m32 -fno-stack-protector -o level2 level1.c 
+
+ //habilito proteccion ASLR que rondomiza direcciones
+#!bash
+sudo -s 
+echo 2 > /proc/sys/kernel/randomize_va_space
+exit
+
+
+
+

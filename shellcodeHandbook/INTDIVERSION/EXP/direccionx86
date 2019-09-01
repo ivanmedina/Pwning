@@ -1,0 +1,4 @@
+0xffffcf98│+0x0014: 0xffffd02c  →  0xffffd23e  →  "SHELL=/bin/bash"
+
+0x0804920d <+123>:	cmp    eax,DWORD PTR [ebp-0x10] #dentro de valid_Serial
+

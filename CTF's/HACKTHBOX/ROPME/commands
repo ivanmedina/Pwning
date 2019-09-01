@@ -1,0 +1,18 @@
+#!bash
+ulimit -c unlimited
+sudo sh -c 'echo "/tmp/core.%t" > /proc/sys/kernel/core_pattern'
+
+#!bash
+python pattern.py offset 0x37654136
+hex pattern decoded as: 6Ae7
+140
+
+
+python pattern.py create 150 
+
+#!bash
+sudo -s 
+echo 0 > /proc/sys/kernel/randomize_va_space
+exit
+
+gcc -fno-stack-protector -z execstack -o level1 level1.c

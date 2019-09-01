@@ -1,0 +1,60 @@
+0x08049192 <+0>:	push   ebp
+   0x08049193 <+1>:	mov    ebp,esp
+   0x08049195 <+3>:	push   ebx
+   0x08049196 <+4>:	sub    esp,0xc
+   0x08049199 <+7>:	call   0x8049306 <__x86.get_pc_thunk.ax>
+   0x0804919e <+12>:	add    eax,0x2e62
+   0x080491a3 <+17>:	push   DWORD PTR [ebp+0x8]
+   0x080491a6 <+20>:	mov    ebx,eax
+   0x080491a8 <+22>:	call   0x8049060 <strlen@plt>
+   0x080491ad <+27>:	add    esp,0x4
+   0x080491b0 <+30>:	mov    DWORD PTR [ebp-0x10],eax
+   0x080491b3 <+33>:	mov    DWORD PTR [ebp-0x8],0x0
+   0x080491ba <+40>:	cmp    DWORD PTR [ebp-0x10],0x9
+   0x080491be <+44>:	ja     0x80491c7 <valid_serial+53>
+   0x080491c0 <+46>:	mov    eax,0x0
+   0x080491c5 <+51>:	jmp    0x804923e <valid_serial+172>
+   0x080491c7 <+53>:	mov    DWORD PTR [ebp-0xc],0x0
+   0x080491ce <+60>:	jmp    0x804920a <valid_serial+120>
+   0x080491d0 <+62>:	mov    edx,DWORD PTR [ebp+0x8]
+   0x080491d3 <+65>:	mov    eax,DWORD PTR [ebp-0xc]
+   0x080491d6 <+68>:	add    eax,edx
+   0x080491d8 <+70>:	movzx  eax,BYTE PTR [eax]
+   0x080491db <+73>:	cmp    al,0x2f
+   0x080491dd <+75>:	jle    0x80491ee <valid_serial+92>
+   0x080491df <+77>:	mov    edx,DWORD PTR [ebp+0x8]
+   0x080491e2 <+80>:	mov    eax,DWORD PTR [ebp-0xc]
+   0x080491e5 <+83>:	add    eax,edx
+   0x080491e7 <+85>:	movzx  eax,BYTE PTR [eax]
+   0x080491ea <+88>:	cmp    al,0x7a
+   0x080491ec <+90>:	jle    0x80491f5 <valid_serial+99>
+   0x080491ee <+92>:	mov    eax,0x0
+   0x080491f3 <+97>:	jmp    0x804923e <valid_serial+172>
+   0x080491f5 <+99>:	mov    edx,DWORD PTR [ebp+0x8]
+   0x080491f8 <+102>:	mov    eax,DWORD PTR [ebp-0xc]
+   0x080491fb <+105>:	add    eax,edx
+   0x080491fd <+107>:	movzx  eax,BYTE PTR [eax]
+   0x08049200 <+110>:	movsx  eax,al
+   0x08049203 <+113>:	add    DWORD PTR [ebp-0x8],eax
+   0x08049206 <+116>:	add    DWORD PTR [ebp-0xc],0x1
+   0x0804920a <+120>:	mov    eax,DWORD PTR [ebp-0xc]
+   0x0804920d <+123>:	cmp    eax,DWORD PTR [ebp-0x10]
+   0x08049210 <+126>:	jb     0x80491d0 <valid_serial+62>
+   0x08049212 <+128>:	mov    ecx,DWORD PTR [ebp-0x8]
+   0x08049215 <+131>:	mov    edx,0x266a3dd3
+   0x0804921a <+136>:	mov    eax,ecx
+   0x0804921c <+138>:	mul    edx
+   0x0804921e <+140>:	mov    eax,edx
+   0x08049220 <+142>:	shr    eax,0x7
+   0x08049223 <+145>:	imul   eax,eax,0x355
+   0x08049229 <+151>:	sub    ecx,eax
+   0x0804922b <+153>:	mov    eax,ecx
+   0x0804922d <+155>:	cmp    eax,0x53
+   0x08049230 <+158>:	jne    0x8049239 <valid_serial+167>
+   0x08049232 <+160>:	mov    eax,0x1
+   0x08049237 <+165>:	jmp    0x804923e <valid_serial+172>
+   0x08049239 <+167>:	mov    eax,0x0
+   0x0804923e <+172>:	mov    ebx,DWORD PTR [ebp-0x4]
+   0x08049241 <+175>:	leave  
+   0x08049242 <+176>:	ret    
+
