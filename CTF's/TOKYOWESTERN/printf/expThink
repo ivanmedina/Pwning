@@ -1,0 +1,23 @@
+
+
+
+
+
+'''        
+# ef➤  x __GI___libc_read
+#    0x7f199c144f70 <__GI___libc_read>:	lea    rax,[rip+0xdd459]        # 0x7f199c2223d0 <__libc_multiple_threads>
+# gef➤  x __GI___libc_read +1 
+#    0x7f199c144f71 <__GI___libc_read+1>:	lea    eax,[rip+0xdd459]        # 0x7f199c2223d0 <__libc_multiple_threads>
+# gef➤  x __GI___libc_read +2
+#    0x7f199c144f72 <__GI___libc_read+2>:	add    eax,0xdd459
+# gef➤  x __GI___libc_read +3
+#    0x7f199c144f73 <__GI___libc_read+3>:	pop    rcx
+# gef➤  x __GI___libc_read +4
+#    0x7f199c144f74 <__GI___libc_read+4>:	(bad)  
+# gef➤  x __GI___libc_read +5
+#    0x7f199c144f75 <__GI___libc_read+5>:	or     eax,0x85008b00
+'''
+   print("[DBG] GOT_READ= ",hex(got_read))
+
+
+read 0x7fae23d22f70

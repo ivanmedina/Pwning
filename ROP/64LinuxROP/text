@@ -1,0 +1,95 @@
+The Three Trials of Code Injection
+
+Alas, stack smashing is much harder these days. On my stock Ubuntu 12.04 install, there are 3 countermeasures:
+
+    GCC Stack-Smashing Protector (SSP), aka ProPolice: the compiler rearranges the stack layout to make buffer overflows less dangerous and inserts runtime stack integrity checks.
+
+    Executable space protection (NX): attempting to execute code in the stack causes a segmentation fault. This feature goes by many names, e.g. Data Execution Prevention (DEP) on Windows, or Write XOR Execute (W^X) on BSD. We call it NX here, because 64-bit Linux implements this feature with the CPU’s NX bit ("Never eXecute").
+
+    Address Space Layout Randomization (ASLR): the location of the stack is randomized every run, so even if we can overwrite the return address, we have no idea what to put there.
+
+We’ll cheat to get around them. Firstly, we disable the SSP:
+
+$ gcc -fno-stack-protector -o victim victim.c
+
+Next, we disable executable space protection:
+
+$ execstack -s victim
+
+Lastly, we disable ASLR when running the binary:
+
+$ setarch `arch` -R ./victim
+
+One more cheat. We’ll simply print the buffer location:
+
+  printf("%p\n", name);  // Print address of buffer.The Three Trials of Code Injection
+
+Alas, stack smashing is much harder these days. On my stock Ubuntu 12.04 install, there are 3 countermeasures:
+
+    GCC Stack-Smashing Protector (SSP), aka ProPolice: the compiler rearranges the stack layout to make buffer overflows less dangerous and inserts runtime stack integrity checks.
+
+    Executable space protection (NX): attempting to execute code in the stack causes a segmentation fault. This feature goes by many names, e.g. Data Execution Prevention (DEP) on Windows, or Write XOR Execute (W^X) on BSD. We call it NX here, because 64-bit Linux implements this feature with the CPU’s NX bit ("Never eXecute").
+
+    Address Space Layout Randomization (ASLR): the location of the stack is randomized every run, so even if we can overwrite the return address, we have no idea what to put there.
+
+We’ll cheat to get around them. Firstly, we disable the SSP:
+
+$ gcc -fno-stack-protector -o victim victim.c
+
+Next, we disable executable space protection:
+
+$ execstack -s victim
+
+Lastly, we disable ASLR when running the binary:
+
+$ setarch `arch` -R ./victim
+
+
+The Three Trials of Code Injection
+
+Alas, stack smashing is much harder these days. On my stock Ubuntu 12.04 install, there are 3 countermeasures:
+
+    GCC Stack-Smashing Protector (SSP), aka ProPolice: the compiler rearranges the stack layout to make buffer overflows less dangerous and inserts runtime stack integrity checks.
+
+    Executable space protection (NX): attempting to execute code in the stack causes a segmentation fault. This feature goes by many names, e.g. Data Execution Prevention (DEP) on Windows, or Write XOR Execute (W^X) on BSD. We call it NX here, because 64-bit Linux implements this feature with the CPU’s NX bit ("Never eXecute").
+
+    Address Space Layout Randomization (ASLR): the location of the stack is randomized every run, so even if we can overwrite the return address, we have no idea what to put there.
+
+We’ll cheat to get around them. Firstly, we disable the SSP:
+
+$ gcc -fno-stack-protector -o victim victim.c
+
+Next, we disable executable space protection:
+
+$ execstack -s victim
+
+Lastly, we disable ASLR when running the binary:
+
+$ setarch `arch` -R ./victim
+
+
+The Three Trials of Code Injection
+
+Alas, stack smashing is much harder these days. On my stock Ubuntu 12.04 install, there are 3 countermeasures:
+
+    GCC Stack-Smashing Protector (SSP), aka ProPolice: the compiler rearranges the stack layout to make buffer overflows less dangerous and inserts runtime stack integrity checks.
+
+    Executable space protection (NX): attempting to execute code in the stack causes a segmentation fault. This feature goes by many names, e.g. Data Execution Prevention (DEP) on Windows, or Write XOR Execute (W^X) on BSD. We call it NX here, because 64-bit Linux implements this feature with the CPU’s NX bit ("Never eXecute").
+
+    Address Space Layout Randomization (ASLR): the location of the stack is randomized every run, so even if we can overwrite the return address, we have no idea what to put there.
+
+We’ll cheat to get around them. Firstly, we disable the SSP:
+
+$ gcc -fno-stack-protector -o victim victim.c
+
+Next, we disable executable space protection:
+
+$ execstack -s victim
+
+Lastly, we disable ASLR when running the binary:
+
+$ setarch `arch` -R ./victim
+
+printf("%p\n", name);  // Print address of buffer.
+
+

