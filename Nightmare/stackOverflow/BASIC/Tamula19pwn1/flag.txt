@@ -1,0 +1,2 @@
+
+flag{g0ttem_b0yz}

