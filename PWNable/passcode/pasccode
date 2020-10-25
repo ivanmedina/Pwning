@@ -1,0 +1,7 @@
+Now I can safely trust you that you have credential :)
+
+   0x08048639 <+48>:	call   0x80484a0 <__isoc99_scanf@plt>
+338150
+13371337
+nos vamos a exit y ese exit retorna a esa direccion en la entrada got 
+

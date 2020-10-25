@@ -1,0 +1,21 @@
+test ex
+$readelf -l /path/to/myprogram.set | grep -i stack
+$readelf -l /path/to/myprogram.clear | grep -i stack
+
+disallow code execution in stack
+$execstack -c /path/to/myprogram
+$execstack -q /path/to/myprogram
+
+allow code execution in stack
+execstack -s ...
+execstack -q ...
+
+disable ASLR
+echo 0 > /proc/sys/kernel/randomize_va_space
+
+randomize stack sapces
+echo 1 /proc/sys/kernel/randomize_va_space
+
+randomize stack and heap sapces
+echo 2 /proc/sys/kernel/randomize_va_space
+

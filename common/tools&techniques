@@ -1,0 +1,14 @@
+file [* | archivo]
+vim archivo
+man ascii
+hexdump -C archivo
+strings archivo
+objdump -d archivo
+objdump -x archivo | less
+gbd archivo
+set disassemble-flavor intel
+dissasemble main
+break *ADDRESS
+r test-key
+inforegisters (rsi)
+strace./archivo

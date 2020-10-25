@@ -1,0 +1,11 @@
+primero mira con el comando file
+ahi encontraras que clase de archivo es
+despues mira con strings quiza encontremos algo
+encontramos que se empaquto con upx
+bueno desempaquetemoslo con upx
+ejecutemoslo y veamos lo que dice
+okey sigamos esas funciones 
+es mas sencillo con hooper
+usa gdb para ejecutarlo y colocar el break que encontraste gracias
+	a hooper
+imprimamos esa con: printf "%s", 0x6c96b0
