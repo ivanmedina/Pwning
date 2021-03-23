@@ -1,0 +1,28 @@
+ FASTCALL
+The FASTCALL calling convention is not completely standard across all compilers, so it should be used with caution. In FASTCALL, the first 2 or 3 32-bit (or smaller) arguments are passed in registers, with the most commonly used registers being edx, eax, and ecx. Additional arguments, or arguments larger than 4-bytes are passed on the stack, often in Right-to-Left order (similar to CDECL). The calling function most frequently is responsible for cleaning the stack, if needed.
+
+Because of the ambiguities, it is recommended that FASTCALL be used only in situations with 1, 2, or 3 32-bit arguments, where speed is essential.
+
+The following C function:
+
+_fastcall int MyFunction3(int a, int b)
+{
+   return a + b;
+}
+and the following C function call:
+
+x = MyFunction3(2, 3);
+Will produce the following assembly code fragments for the called, and the calling functions, respectively:
+
+:@MyFunction3@8
+push ebp
+mov ebp, esp ;many compilers create a stack frame even if it isn't used
+add eax, edx ;a is in eax, b is in edx
+pop ebp
+ret
+and
+
+;the calling function
+mov eax, 2
+mov edx, 3
+call @MyFunction3@8

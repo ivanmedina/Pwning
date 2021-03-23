@@ -1,0 +1,33 @@
+ STDCALL
+STDCALL, also known as "WINAPI" (and a few other names, depending on where you are reading it) is used almost exclusively by Microsoft as the standard calling convention for the Win32 API. Since STDCALL is strictly defined by Microsoft, all compilers that implement it do it the same way.
+
+STDCALL passes arguments right-to-left, and returns the value in eax. (The Microsoft documentation erroneously claimed that arguments are passed left-to-right, but this is not the case.)
+The called function cleans the stack, unlike CDECL. This means that STDCALL doesn't allow variable-length argument lists.
+Consider the following C function:
+
+_stdcall int MyFunction2(int a, int b)
+{
+   return a + b;
+}
+and the calling instruction:
+
+ x = MyFunction2(2, 3);
+These will produce the following respective assembly code fragments:
+
+:_MyFunction2@8
+push ebp
+mov ebp, esp
+mov eax, [ebp + 8]
+mov edx, [ebp + 12]
+add eax, edx
+pop ebp
+ret 8
+and
+
+push 3
+push 2
+call _MyFunction2@8
+There are a few important points to note here:
+
+In the function body, the ret instruction has an (optional) argument that indicates how many bytes to pop off the stack when the function returns.
+STDCALL functions are name-decorated with a leading underscore, followed by an @, and then the number (in bytes) of arguments passed on the stack. This number will always be a multiple of 4, on a 32-bit aligned machine.
