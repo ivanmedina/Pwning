@@ -12,7 +12,6 @@ malloc(24,p64(0x61))
 ```
 malloc(24,'C'*48)
 malloc(24,'D'*48)
-
 ```
 ![imagen2.png](https://raw.githubusercontent.com/ivanmedina/Pwning/master/HEAP/HeapLAB/challenge-fastbin_dup/assets/Imagen2.png)
 
