@@ -1,0 +1,13 @@
+We cant use 0x7f fastbins
+
+So we can use one fastbin dup to set up a fake size field in the main arena
+
+pwndbg> p/x av->system_mem
+pwndbg> dq av->top
+
+We were dealing with the top chunk size integrity check, wich waw comparing our fake top chunk size
+
+-s parameter in system("bin/sh") avoid malformed characterd
+-p does not reset uid and still root
+
+
