@@ -48,4 +48,4 @@ And now we can note that we controll where the next 0x20 fastbin will be allocat
 
 ## References
 
-Max Kamper, Linux Heap Exploitation - Part 1, Udemy 5(14)
+Max Kamper, Linux Heap Exploitation - Part 1, Udemy 3(9-11)
