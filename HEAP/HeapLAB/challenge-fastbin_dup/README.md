@@ -121,3 +121,7 @@ Let's change the line: 'malloc(0x58,b'L'*8)' to 'malloc(0x58,b'-s\0')'
 ![imagen17.png](https://raw.githubusercontent.com/ivanmedina/Pwning/master/HEAP/HeapLAB/challenge-fastbin_dup/assets/Imagen17.png)
 
 and shell!
+
+## References
+
+Max Kamper, Linux Heap Exploitation - Part 1, Udemy 4(9-11)

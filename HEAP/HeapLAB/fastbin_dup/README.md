@@ -45,3 +45,7 @@ malloc(24,b'E'*24)
 ![imagen7.png](https://raw.githubusercontent.com/ivanmedina/Pwning/master/HEAP/HeapLAB/fastbin_dup/assets/Imagen7.png)
 
 And now we can note that we controll where the next 0x20 fastbin will be allocated.
+
+## References
+
+Max Kamper, Linux Heap Exploitation - Part 1, Udemy 5(14)
