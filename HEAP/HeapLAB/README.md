@@ -19,6 +19,15 @@ we return to our fake chunk.
 - In this overflow we need also to set correctly the prev_size field of chunk A in chunk_B.
 - The overflow must set valid values of FD and BK in chunk_A that indicate where we want to point. (shellcode)
 
+5.- Safe unlink ([link](https://github.com/ivanmedina/Pwning/tree/master/HEAP/HeapLAB/safe_unlink)) 
+- Request two chunks A and B, and leveraged an overflow bug to clear prev_inuse flag on the allocated chunk B.
+- Prepare a fake chunk metadata in its previous chunk, chunk A, including a size field, forward pointer and backward pointer, and prev_size field.
+- When we freed chunk B, its clear prev_inuse flag indicated to malloc that the previous chunk was free, therefore a candidate for consolidation.
+- Malloc used our forged prev_size field to find the start of the previous chunk so it could unlink prior to consolidation.
+- FD and BK checked that the BK at the destination pointed back to our fake chunk, and perform the same check to BK.
+- Once our fake chunk passed the safe unlinking checks, malloc unlinked it. 
+- It followed our FD and copied our BK over the BK at its destination. Then it followed our BK and copied our FD over the FD at its destination.
+
 ## References
 
 Max Kamper, Linux Heap Exploitation - Part 1, Udemy
